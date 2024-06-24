@@ -5,7 +5,11 @@ I was bored on the train and made this quick little extension to sort and catego
 
 This program uses the chrome api to detect aws tabs, based on their urls, and then group them by either their Service (ECS, ECR, Cloud9, etc.) or their categories (Front-end Web & Monitoring, Storage, Dev Tools, etc.). All of these categories are based off of the AWS all services page in the aws console. the services and their categories are saved in the services.js file. 
 
+## TODO: (probably when im on the train next)
+* add automatic sorting instead of manual 
+* more allow user to add their own tab sorted groups
 
+## Deploy Extension
 This extension is currently up for review to be published, however if you would like to deploy it locally and use the extension clone this repo and follow these steps:
 
 1) top right extensions logo: 
@@ -51,3 +55,4 @@ var services = {
 }
 
 ```
+
