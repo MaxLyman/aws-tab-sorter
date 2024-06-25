@@ -33,20 +33,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 catagorizeTabs(tab_dict)
             })
         }
-
-        // uncollapse the group that is currently active (if on current window)
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            let activeTab = tabs[0]
-            chrome.tabs.get(activeTab.id, function(tab) {
-                if (tab.groupId !== chrome.tabGroups.TAB_GROUP_ID_NONE) {
-                    chrome.tabGroups.get(tab.groupId, function(group) {
-                        if (group.collapsed) {
-                            chrome.tabGroups.update(group.id, {collapsed: false});
-                        }
-                    })
-                }
-            })
-        })
     })
 
 
@@ -58,13 +44,27 @@ function catagorizeTabs(tab_dict){
         if (tab_dict[key].length > 0) {
             chrome.tabGroups.query({title: key}, function(groups) {
                 if (groups.length > 0){
-                    chrome.tabs.group({groupId: groups[0].id, tabIds: tab_dict[key]})
+                    chrome.tabs.group({groupId: groups[0].id, tabIds: tab_dict[key]}, function() {
+                        checkCurrentTabGroup()
+                    })
                 } else {
                     chrome.tabs.group({tabIds: tab_dict[key]}, function(groupId) {
-                        chrome.tabGroups.update(groupId, {title: key, collapsed: true})
+                        chrome.tabGroups.update(groupId, {title: key, collapsed: true}, function() {
+                            checkCurrentTabGroup()
+                        })
                     })
                 }
             })
         }
     }
+}
+
+function checkCurrentTabGroup(){
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        let currentTab = tabs[0]
+        console.log(currentTab.url, currentTab.groupId)
+        if (currentTab.groupId >= 0) {
+            chrome.tabGroups.update(currentTab.groupId, {collapsed: false})
+        }
+    });
 }
